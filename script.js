@@ -315,19 +315,5 @@ document.addEventListener('DOMContentLoaded', () => {
     // رفرش خودکار هر یک ساعت (۳,۶۰۰,۰۰۰ میلی‌ثانیه)
     setInterval(refreshAllPrices, 3600000);
 
-    // FAQ toggle
-    document.querySelectorAll('.faq-q').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const answer = btn.nextElementSibling;
-            const expanded = btn.getAttribute('aria-expanded') === 'true';
-            btn.setAttribute('aria-expanded', String(!expanded));
-            if (answer) {
-                if (answer.hasAttribute('hidden')) {
-                    answer.removeAttribute('hidden');
-                } else {
-                    answer.setAttribute('hidden', '');
-                }
-            }
-        });
-    });
+    // FAQ removed
 });
