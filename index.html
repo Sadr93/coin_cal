@@ -10,6 +10,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "@material/web/": "https://esm.run/@material/web/"
+            }
+        }
+    </script>
+    <script type="module">
+        import '@material/web/all.js';
+        import {styles as typescaleStyles} from '@material/web/typography/md-typescale-styles.js';
+        document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    </script>
 </head>
 <body>
     <div class="container">
@@ -30,40 +42,75 @@
                             <td>سکه امامی</td>
                             <td><span id="price-full" class="loading-text">درحال بارگذاری...</span></td>
                             <td>
-                                <input type="text" id="count-full" inputmode="numeric" value="۰" oninput="formatCountInput(this)" onfocus="resetCountOnFocus(this)" style="width:80px; text-align:center;">
-                                <span style="font-size:12px; color:#666; margin-right:5px;">عدد</span>
+                                <md-outlined-text-field 
+                                    id="count-full" 
+                                    type="text" 
+                                    value="۰" 
+                                    oninput="formatCountInput(this)" 
+                                    onfocus="resetCountOnFocus(this)"
+                                    style="width:80px; text-align:center;"
+                                    label="عدد">
+                                </md-outlined-text-field>
                             </td>
                         </tr>
                         <tr>
                             <td>نیم سکه</td>
                             <td><span id="price-half" class="loading-text">درحال بارگذاری...</span></td>
                             <td>
-                                <input type="text" id="count-half" inputmode="numeric" value="۰" oninput="formatCountInput(this)" onfocus="resetCountOnFocus(this)" style="width:80px; text-align:center;">
-                                <span style="font-size:12px; color:#666; margin-right:5px;">عدد</span>
+                                <md-outlined-text-field 
+                                    id="count-half" 
+                                    type="text" 
+                                    value="۰" 
+                                    oninput="formatCountInput(this)" 
+                                    onfocus="resetCountOnFocus(this)"
+                                    style="width:80px; text-align:center;"
+                                    label="عدد">
+                                </md-outlined-text-field>
                             </td>
                         </tr>
                         <tr>
                             <td>ربع سکه</td>
                             <td><span id="price-quarter" class="loading-text">درحال بارگذاری...</span></td>
                             <td>
-                                <input type="text" id="count-quarter" inputmode="numeric" value="۰" oninput="formatCountInput(this)" onfocus="resetCountOnFocus(this)" style="width:80px; text-align:center;">
-                                <span style="font-size:12px; color:#666; margin-right:5px;">عدد</span>
+                                <md-outlined-text-field 
+                                    id="count-quarter" 
+                                    type="text" 
+                                    value="۰" 
+                                    oninput="formatCountInput(this)" 
+                                    onfocus="resetCountOnFocus(this)"
+                                    style="width:80px; text-align:center;"
+                                    label="عدد">
+                                </md-outlined-text-field>
                             </td>
                         </tr>
                         <tr>
                             <td>سکه گرمی</td>
                             <td><span id="price-gram" class="loading-text">درحال بارگذاری...</span></td>
                             <td>
-                                <input type="text" id="count-gram" inputmode="numeric" value="۰" oninput="formatCountInput(this)" onfocus="resetCountOnFocus(this)" style="width:80px; text-align:center;">
-                                <span style="font-size:12px; color:#666; margin-right:5px;">عدد</span>
+                                <md-outlined-text-field 
+                                    id="count-gram" 
+                                    type="text" 
+                                    value="۰" 
+                                    oninput="formatCountInput(this)" 
+                                    onfocus="resetCountOnFocus(this)"
+                                    style="width:80px; text-align:center;"
+                                    label="عدد">
+                                </md-outlined-text-field>
                             </td>
                         </tr>
                         <tr>
                             <td>طلای آب شده</td>
                             <td><span id="price-melted" class="loading-text">درحال بارگذاری...</span></td>
                             <td>
-                                <input type="text" id="count-melted" inputmode="numeric" value="۰" oninput="formatCountInput(this)" onfocus="resetCountOnFocus(this)" style="width:80px; text-align:center;">
-                                <span style="font-size:12px; color:#666; margin-right:5px;">گرم</span>
+                                <md-outlined-text-field 
+                                    id="count-melted" 
+                                    type="text" 
+                                    value="۰" 
+                                    oninput="formatCountInput(this)" 
+                                    onfocus="resetCountOnFocus(this)"
+                                    style="width:80px; text-align:center;"
+                                    label="گرم">
+                                </md-outlined-text-field>
                             </td>
                         </tr>
                     </tbody>
@@ -80,16 +127,16 @@
                         <tr>
                             <td>تعداد اقساط</td>
                             <td>
-                                <select id="installments-count" style="padding:8px; border-radius:6px; font-family: 'Vazirmatn', sans-serif;">
-                                    <option value="3">۳</option>
-                                    <option value="4">۴</option>
-                                    <option value="5">۵</option>
-                                    <option value="6">۶</option>
-                                    <option value="7">۷</option>
-                                    <option value="8">۸</option>
-                                    <option value="9">۹</option>
-                                    <option value="10">۱۰</option>
-                                </select>
+                                <md-outlined-select id="installments-count" style="font-family: 'Vazirmatn', sans-serif;">
+                                    <md-select-option value="3">۳</md-select-option>
+                                    <md-select-option value="4">۴</md-select-option>
+                                    <md-select-option value="5">۵</md-select-option>
+                                    <md-select-option value="6">۶</md-select-option>
+                                    <md-select-option value="7">۷</md-select-option>
+                                    <md-select-option value="8">۸</md-select-option>
+                                    <md-select-option value="9">۹</md-select-option>
+                                    <md-select-option value="10">۱۰</md-select-option>
+                                </md-outlined-select>
                             </td>
                         </tr>
                     </tbody>

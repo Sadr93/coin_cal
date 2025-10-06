@@ -21,7 +21,7 @@ function formatCountInput(input) {
     const persianNumbers = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
     const englishNumbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 
-    let value = input.value || '';
+    let value = getMaterialInputValue(input) || '';
 
     // تبدیل فارسی به انگلیسی برای اعتبارسنجی
     for (let i = 0; i < 10; i++) {
@@ -43,17 +43,33 @@ function formatCountInput(input) {
     if (numeric < 0) numeric = 0;
 
     // تبدیل دوباره به فارسی برای نمایش
-    input.value = convertToPersianNumbers(String(numeric));
+    setMaterialInputValue(input, convertToPersianNumbers(String(numeric)));
 
     // بعد از تغییر مقدار، محاسبه را به‌روزرسانی کن
     computeTotals();
 }
 
+// تابع سازگاری با Material Web Components
+function getMaterialInputValue(element) {
+    if (element.tagName === 'MD-OUTLINED-TEXT-FIELD') {
+        return element.value;
+    }
+    return element.value;
+}
+
+function setMaterialInputValue(element, value) {
+    if (element.tagName === 'MD-OUTLINED-TEXT-FIELD') {
+        element.value = value;
+    } else {
+        element.value = value;
+    }
+}
+
 // هنگام فوکوس روی فیلد تعداد، اگر مقدار غیرصفر باشد، صفر شود
 function resetCountOnFocus(input) {
-    const numeric = getNumericValue(input.value);
+    const numeric = getNumericValue(getMaterialInputValue(input));
     if (numeric !== 0) {
-        input.value = '۰';
+        setMaterialInputValue(input, '۰');
         computeTotals();
     }
 }
@@ -244,11 +260,17 @@ function computeTotals() {
     const priceGramText = (document.getElementById('price-gram') || {}).textContent || '';
     const priceMeltedText = (document.getElementById('price-melted') || {}).textContent || '';
 
-    const countQuarterText = (document.getElementById('count-quarter') || {}).value || '۰';
-    const countHalfText = (document.getElementById('count-half') || {}).value || '۰';
-    const countFullText = (document.getElementById('count-full') || {}).value || '۰';
-    const countGramText = (document.getElementById('count-gram') || {}).value || '۰';
-    const countMeltedText = (document.getElementById('count-melted') || {}).value || '۰';
+    const countQuarterEl = document.getElementById('count-quarter');
+    const countHalfEl = document.getElementById('count-half');
+    const countFullEl = document.getElementById('count-full');
+    const countGramEl = document.getElementById('count-gram');
+    const countMeltedEl = document.getElementById('count-melted');
+    
+    const countQuarterText = countQuarterEl ? getMaterialInputValue(countQuarterEl) : '۰';
+    const countHalfText = countHalfEl ? getMaterialInputValue(countHalfEl) : '۰';
+    const countFullText = countFullEl ? getMaterialInputValue(countFullEl) : '۰';
+    const countGramText = countGramEl ? getMaterialInputValue(countGramEl) : '۰';
+    const countMeltedText = countMeltedEl ? getMaterialInputValue(countMeltedEl) : '۰';
 
     const priceQuarter = getNumericValue(priceQuarterText); // به تومان
     const priceHalf = getNumericValue(priceHalfText);
