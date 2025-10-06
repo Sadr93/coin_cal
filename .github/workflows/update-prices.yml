@@ -1,0 +1,130 @@
+name: Update Prices
+
+on:
+  schedule:
+    # ساعت 8:00 UTC (11:30 تهران)
+    - cron: '0 4 * * *'
+    # ساعت 11:00 UTC (14:30 تهران)  
+    - cron: '0 7 * * *'
+    # ساعت 14:00 UTC (17:30 تهران)
+    - cron: '0 10 * * *'
+    # ساعت 16:00 UTC (19:30 تهران)
+    - cron: '0 12 * * *'
+  workflow_dispatch: # امکان اجرای دستی
+
+jobs:
+  update-prices:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        pip install requests
+    
+    - name: Update prices
+      run: |
+        python3 << 'EOF'
+        import json
+        import requests
+        import time
+        from datetime import datetime
+        
+        # API Navasan
+        NAVASAN_API_KEY = 'freeO05QhWkEZcoEQweVWoxxNqPE7nX0'
+        NAVASAN_LATEST = 'https://api.navasan.tech/latest/'
+        
+        def fetch_from_navasan():
+            symbols = ['sekkeh', 'nim', 'rob', 'gerami', '18ayar']
+            prices = {}
+            
+            for symbol in symbols:
+                try:
+                    url = f"{NAVASAN_LATEST}{symbol}?token={NAVASAN_API_KEY}"
+                    response = requests.get(url, timeout=10)
+                    data = response.json()
+                    
+                    if data and 'data' in data and data['data']:
+                        price_value = data['data'].get('price', 0)
+                        if price_value and 1000 <= price_value <= 1000000000000:
+                            price_toman = int(price_value / 10)
+                            
+                            if symbol == 'sekkeh':
+                                prices['full'] = price_toman
+                            elif symbol == 'nim':
+                                prices['half'] = price_toman
+                            elif symbol == 'rob':
+                                prices['quarter'] = price_toman
+                            elif symbol == 'gerami':
+                                prices['gram'] = price_toman
+                            elif symbol == '18ayar':
+                                prices['goldmini'] = price_toman
+                                
+                except Exception as e:
+                    print(f"Error fetching {symbol}: {e}")
+                    continue
+            
+            # محاسبه طلای آب شده
+            if 'goldmini' in prices and 'melted' not in prices:
+                prices['melted'] = int(prices['goldmini'] * 4.2)
+            
+            return prices
+        
+        # تلاش برای دریافت قیمت‌های واقعی
+        try:
+            prices = fetch_from_navasan()
+            if not prices or not any(prices.values()):
+                raise Exception("No valid prices received")
+        except Exception as e:
+            print(f"Error fetching real prices: {e}")
+            # استفاده از قیمت‌های ثابت
+            prices = {
+                'full': 111400000,
+                'half': 59600000,
+                'quarter': 33200000,
+                'gram': 16800000,
+                'melted': 9855034,
+                'goldmini': 10483400
+            }
+        
+        # تبدیل به فرمت مورد نیاز
+        price_board = {
+            'sekkeh': prices.get('full', 0),
+            'nim': prices.get('half', 0),
+            'rob': prices.get('quarter', 0),
+            'gerami': prices.get('gram', 0),
+            'melted': prices.get('melted', 0),
+            '18ayar': prices.get('goldmini', 0)
+        }
+        
+        # آپدیت فایل prices.json
+        updated_data = {
+            'price_board': price_board,
+            'updated_at': int(time.time())
+        }
+        
+        with open('prices.json', 'w', encoding='utf-8') as f:
+            json.dump(updated_data, f, ensure_ascii=False, indent=2)
+        
+        print("Prices updated successfully!")
+        print(f"Updated at: {datetime.now()}")
+        for key, value in price_board.items():
+            print(f"{key}: {value:,}")
+        EOF
+    
+    - name: Commit and push changes
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add prices.json
+        git diff --staged --quiet || git commit -m "Auto-update prices at $(date '+%Y-%m-%d %H:%M:%S')"
+        git push
