@@ -1,0 +1,414 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Vazirmatn', sans-serif;
+}
+
+body {
+    font-family: 'Vazirmatn', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-image: url('images/Background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: pageFadeIn 550ms ease-out 1;
+}
+
+@keyframes pageFadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.container {
+    max-width: 560px;
+    width: 95%;
+    margin: 10px auto;
+    padding: 10px;
+}
+
+h1 {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    font-size: 1.5rem;
+}
+
+h2.table-title {
+    color: #1e3c72;
+    margin: 15px 0 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+.calculator {
+    background-color: rgba(255, 255, 255, 0.24);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
+    backdrop-filter: blur(12px) saturate(120%);
+    -webkit-backdrop-filter: blur(12px) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    transition: transform 200ms ease, box-shadow 200ms ease;
+}
+
+.calculator:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
+}
+
+.info-box {
+    background-color: rgba(248, 249, 250, 0.4);
+    padding: 15px;
+    border-radius: 8px;
+    border-right: 4px solid #1e3c72;
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.info-box p {
+    margin-bottom: 8px;
+    color: #555;
+    font-size: 0.9rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    color: #fff;
+}
+
+.info-item:last-child {
+    margin-bottom: 0;
+}
+
+.info-item .emoji {
+    font-size: 1.2em;
+    margin-left: 10px;
+}
+
+.info-item .label {
+    flex: 1;
+    text-align: right;
+}
+
+.info-item .value {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.summary-box {
+    background-color: rgba(248, 249, 250, 0.4);
+    padding: 15px;
+    border-radius: 8px;
+    border-right: 4px solid #1e3c72;
+    margin-bottom: 20px;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    padding: 6px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.9rem;
+}
+
+.summary-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.summary-label {
+    color: #555;
+    font-weight: 500;
+}
+
+.summary-value {
+    color: #1e3c72;
+    font-weight: 600;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 6px;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: 'Vazirmatn', sans-serif;
+    background-color: rgba(255, 255, 255, 0.4);
+}
+
+input:focus {
+    outline: none;
+    border-color: #1e3c72;
+    box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.15);
+    background-color: rgba(255, 255, 255, 0.6);
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #1e3c72; /* fallback */
+    background-image: linear-gradient(135deg, #1e3c72, #2a5298);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+    font-family: 'Vazirmatn', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    transition: transform 120ms ease, box-shadow 200ms ease, filter 200ms ease, background-position 200ms ease;
+    box-shadow: 0 6px 16px rgba(30, 60, 114, 0.25);
+    background-size: 140% 140%;
+    background-position: 0% 50%;
+}
+
+button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(30, 60, 114, 0.28);
+    background-position: 100% 50%;
+}
+
+button:active {
+    transform: translateY(0);
+    filter: brightness(0.96);
+}
+
+button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2), 0 6px 16px rgba(30, 60, 114, 0.25);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    overflow: hidden;
+    font-size: 0.8rem;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+}
+
+/* یکسان‌سازی ارتفاع ردیف‌های جدول سکه با سربرگ */
+#coin-table th,
+#coin-table td {
+    height: 56px;
+    vertical-align: middle;
+}
+
+#coin-table td input {
+    height: 36px;
+    line-height: 36px;
+    padding: 0 8px;
+}
+
+/* استایل باکس تنظیمات اقساط */
+#installment-settings {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background-color: rgba(255, 255, 255, 0.4);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 14px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    font-size: 0.9rem;
+}
+
+#installment-settings td {
+    padding: 12px 14px;
+    border-bottom: 1px solid #eee;
+}
+
+#installment-settings tr:last-child td {
+    border-bottom: none;
+}
+
+#installment-settings td:first-child {
+    color: #1e3c72;
+    font-weight: 600;
+    text-align: right;
+    width: 50%;
+}
+
+#installment-settings td:last-child {
+    text-align: left;
+}
+
+#installment-settings select {
+    width: 140px;
+    padding: 10px 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    outline: none;
+    transition: box-shadow 0.2s, border-color 0.2s;
+}
+
+#installment-settings select:focus {
+    border-color: #1e3c72;
+    box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.15);
+}
+
+@media (max-width: 768px) {
+    #installment-settings td:first-child {
+        width: 45%;
+    }
+    #installment-settings td:last-child {
+        text-align: right;
+    }
+    #installment-settings select {
+        width: 100%;
+    }
+}
+
+/* وضعیت بارگذاری قیمت‌ها */
+@keyframes pulseFade {
+    0% { opacity: 0.4; }
+    50% { opacity: 1; }
+    100% { opacity: 0.4; }
+}
+
+.loading-text {
+    color: #555;
+    animation: pulseFade 1.2s ease-in-out infinite;
+}
+
+/* FAQ removed */
+
+
+/* Contact card */
+.contact-card {
+    margin-top: 18px;
+}
+
+.contact-card .contact-content {
+    background: linear-gradient(135deg, rgba(30,60,114,0.12), rgba(42,82,152,0.12));
+    border: 1px solid rgba(30,60,114,0.18);
+    border-radius: 10px;
+    padding: 16px;
+}
+
+.contact-card p { color: #222; margin-bottom: 10px; }
+
+.contact-phone {
+    color: #1e3c72;
+    font-weight: 700;
+    text-decoration: none;
+}
+.contact-phone:hover { text-decoration: underline; }
+
+th {
+    background-color: rgba(248, 248, 248, 0.4);
+    color: #333;
+    font-weight: 600;
+}
+
+tr:hover {
+    background-color: rgba(245, 245, 245, 0.5);
+}
+
+tr {
+    transition: background-color 160ms ease;
+}
+
+/* جدول جزئیات اقساط و وثائق */
+#details-table th {
+    background-color: rgba(248, 248, 248, 0.6);
+    color: #333;
+    font-weight: 700;
+}
+
+#details-table td {
+    color: #1e3c72;
+    font-weight: 600;
+}
+
+/* استایل‌های مخصوص صفحه‌های بزرگتر از موبایل */
+@media (min-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 2rem;
+        margin-bottom: 30px;
+    }
+
+    h2.table-title {
+        font-size: 1.3rem;
+        margin: 20px 0 10px;
+    }
+
+    .calculator {
+        padding: 30px;
+    }
+
+    .summary-item {
+        font-size: 1rem;
+    }
+
+    .info-item {
+        font-size: 1rem;
+    }
+
+    label {
+        font-size: 1rem;
+    }
+
+    input {
+        font-size: 1rem;
+        padding: 12px;
+    }
+
+    button {
+        font-size: 1rem;
+        padding: 14px;
+    }
+
+    table {
+        font-size: 0.9rem;
+    }
+
+    th, td {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 768px) {
+    .info-box p {
+        font-size: 1rem;
+    }
+} 

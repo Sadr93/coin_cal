@@ -5,19 +5,55 @@
     font-family: 'Vazirmatn', sans-serif;
 }
 
+:root {
+    /* Material Design 3 Color Tokens */
+    --md-sys-color-primary: #1e3c72;
+    --md-sys-color-primary-container: #d6e3ff;
+    --md-sys-color-secondary: #5a5d72;
+    --md-sys-color-secondary-container: #dee0f7;
+    --md-sys-color-tertiary: #7a5c95;
+    --md-sys-color-tertiary-container: #f3daff;
+    --md-sys-color-surface: #fefbff;
+    --md-sys-color-surface-variant: #e3e1ec;
+    --md-sys-color-background: #fefbff;
+    --md-sys-color-error: #ba1a1a;
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-on-primary-container: #001a41;
+    --md-sys-color-on-secondary: #ffffff;
+    --md-sys-color-on-secondary-container: #161b2c;
+    --md-sys-color-on-surface: #1c1b1f;
+    --md-sys-color-on-surface-variant: #46464f;
+    --md-sys-color-on-background: #1c1b1f;
+    --md-sys-color-outline: #767680;
+    --md-sys-color-outline-variant: #c6c5d0;
+    
+    /* Elevation */
+    --md-sys-elevation-level0: 0px;
+    --md-sys-elevation-level1: 1px;
+    --md-sys-elevation-level2: 3px;
+    --md-sys-elevation-level3: 6px;
+    --md-sys-elevation-level4: 8px;
+    --md-sys-elevation-level5: 12px;
+    
+    /* Shape */
+    --md-sys-shape-corner-extra-small: 4px;
+    --md-sys-shape-corner-small: 8px;
+    --md-sys-shape-corner-medium: 12px;
+    --md-sys-shape-corner-large: 16px;
+    --md-sys-shape-corner-extra-large: 28px;
+}
+
 body {
     font-family: 'Vazirmatn', sans-serif;
     margin: 0;
     padding: 0;
-    background-image: url('images/Background.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background: var(--md-sys-color-background);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     animation: pageFadeIn 550ms ease-out 1;
+    color: var(--md-sys-color-on-background);
 }
 
 @keyframes pageFadeIn {
@@ -34,35 +70,36 @@ body {
 
 h1 {
     text-align: center;
-    color: #fff;
-    margin-bottom: 20px;
-    font-weight: 700;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    font-size: 1.5rem;
+    color: var(--md-sys-color-on-background);
+    margin-bottom: 24px;
+    font-weight: 400;
+    font-size: 2rem;
+    letter-spacing: -0.5px;
 }
 
 h2.table-title {
-    color: #1e3c72;
-    margin: 15px 0 10px;
-    font-size: 1.1rem;
-    font-weight: 600;
+    color: var(--md-sys-color-on-surface);
+    margin: 16px 0 12px;
+    font-size: 1.125rem;
+    font-weight: 500;
     text-align: center;
 }
 
 .calculator {
-    background-color: rgba(255, 255, 255, 0.24);
-    padding: 15px;
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.14);
-    backdrop-filter: blur(12px) saturate(120%);
-    -webkit-backdrop-filter: blur(12px) saturate(120%);
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    transition: transform 200ms ease, box-shadow 200ms ease;
+    background: var(--md-sys-color-surface);
+    padding: 24px;
+    border-radius: var(--md-sys-shape-corner-large);
+    box-shadow: 
+        0 var(--md-sys-elevation-level1) 3px rgba(0, 0, 0, 0.12),
+        0 var(--md-sys-elevation-level1) 1px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    transition: all 200ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 .calculator:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
+    box-shadow: 
+        0 var(--md-sys-elevation-level2) 6px rgba(0, 0, 0, 0.15),
+        0 var(--md-sys-elevation-level1) 2px rgba(0, 0, 0, 0.1);
 }
 
 .info-box {
@@ -152,71 +189,113 @@ label {
 
 input {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 0.9rem;
+    padding: 16px;
+    border: 1px solid var(--md-sys-color-outline);
+    border-radius: var(--md-sys-shape-corner-small);
+    font-size: 1rem;
     font-family: 'Vazirmatn', sans-serif;
-    background-color: rgba(255, 255, 255, 0.4);
+    background: var(--md-sys-color-surface);
+    color: var(--md-sys-color-on-surface);
+    transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 input:focus {
     outline: none;
-    border-color: #1e3c72;
-    box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.15);
-    background-color: rgba(255, 255, 255, 0.6);
+    border-color: var(--md-sys-color-primary);
+    box-shadow: 0 0 0 2px var(--md-sys-color-primary-container);
+    background: var(--md-sys-color-surface);
+}
+
+input:hover {
+    border-color: var(--md-sys-color-on-surface);
 }
 
 button {
     width: 100%;
-    padding: 12px;
-    background-color: #1e3c72; /* fallback */
-    background-image: linear-gradient(135deg, #1e3c72, #2a5298);
-    color: white;
+    padding: 16px 24px;
+    background: var(--md-sys-color-primary);
+    color: var(--md-sys-color-on-primary);
     border: none;
-    border-radius: 10px;
+    border-radius: var(--md-sys-shape-corner-large);
     cursor: pointer;
-    font-size: 0.9rem;
-    margin-bottom: 15px;
+    font-size: 1rem;
+    margin-bottom: 16px;
     font-family: 'Vazirmatn', sans-serif;
-    font-weight: 600;
-    letter-spacing: 0.3px;
-    transition: transform 120ms ease, box-shadow 200ms ease, filter 200ms ease, background-position 200ms ease;
-    box-shadow: 0 6px 16px rgba(30, 60, 114, 0.25);
-    background-size: 140% 140%;
-    background-position: 0% 50%;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
+    box-shadow: 
+        0 var(--md-sys-elevation-level1) 2px rgba(0, 0, 0, 0.12),
+        0 var(--md-sys-elevation-level1) 1px rgba(0, 0, 0, 0.08);
+    position: relative;
+    overflow: hidden;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--md-sys-color-on-primary);
+    opacity: 0;
+    transition: opacity 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 
 button:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 10px 22px rgba(30, 60, 114, 0.28);
-    background-position: 100% 50%;
+    box-shadow: 
+        0 var(--md-sys-elevation-level2) 4px rgba(0, 0, 0, 0.15),
+        0 var(--md-sys-elevation-level1) 2px rgba(0, 0, 0, 0.1);
+}
+
+button:hover::before {
+    opacity: 0.08;
 }
 
 button:active {
-    transform: translateY(0);
-    filter: brightness(0.96);
+    transform: translateY(1px);
+    box-shadow: 
+        0 var(--md-sys-elevation-level1) 1px rgba(0, 0, 0, 0.12);
 }
 
 button:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2), 0 6px 16px rgba(30, 60, 114, 0.25);
+    box-shadow: 
+        0 0 0 2px var(--md-sys-color-primary-container),
+        0 var(--md-sys-elevation-level1) 1px rgba(0, 0, 0, 0.12);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 10px;
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 8px;
+    margin-top: 16px;
+    background: var(--md-sys-color-surface);
+    border-radius: var(--md-sys-shape-corner-medium);
     overflow: hidden;
-    font-size: 0.8rem;
+    font-size: 0.875rem;
+    box-shadow: 
+        0 var(--md-sys-elevation-level1) 2px rgba(0, 0, 0, 0.08);
+    border: 1px solid var(--md-sys-color-outline-variant);
 }
 
 th, td {
-    padding: 10px;
+    padding: 16px 12px;
     text-align: center;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--md-sys-color-outline-variant);
+    transition: background-color 150ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+th {
+    background: var(--md-sys-color-surface-variant);
+    color: var(--md-sys-color-on-surface);
+    font-weight: 500;
+    font-size: 0.875rem;
+}
+
+tr:hover td {
+    background: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
 }
 
 /* یکسان‌سازی ارتفاع ردیف‌های جدول سکه با سربرگ */
@@ -305,29 +384,67 @@ th, td {
     animation: pulseFade 1.2s ease-in-out infinite;
 }
 
+/* Price update info */
+.price-update-info {
+    background: var(--md-sys-color-surface-variant);
+    border-radius: var(--md-sys-shape-corner-medium);
+    padding: 16px;
+    margin: 16px 0;
+    text-align: center;
+    border: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.price-update-info p {
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 0.875rem;
+    margin: 0;
+    font-weight: 400;
+}
+
+#last-update {
+    color: var(--md-sys-color-primary);
+    font-weight: 500;
+}
+
 /* FAQ removed */
 
 
 /* Contact card */
 .contact-card {
-    margin-top: 18px;
+    margin-top: 24px;
 }
 
 .contact-card .contact-content {
-    background: linear-gradient(135deg, rgba(30,60,114,0.12), rgba(42,82,152,0.12));
-    border: 1px solid rgba(30,60,114,0.18);
-    border-radius: 10px;
-    padding: 16px;
+    background: var(--md-sys-color-surface);
+    border: 1px solid var(--md-sys-color-outline-variant);
+    border-radius: var(--md-sys-shape-corner-large);
+    padding: 20px;
+    box-shadow: 
+        0 var(--md-sys-elevation-level1) 2px rgba(0, 0, 0, 0.08);
+    transition: all 150ms cubic-bezier(0.2, 0, 0, 1);
 }
 
-.contact-card p { color: #222; margin-bottom: 10px; }
+.contact-card .contact-content:hover {
+    box-shadow: 
+        0 var(--md-sys-elevation-level2) 4px rgba(0, 0, 0, 0.12);
+}
+
+.contact-card p { 
+    color: var(--md-sys-color-on-surface); 
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
 
 .contact-phone {
-    color: #1e3c72;
-    font-weight: 700;
+    color: var(--md-sys-color-primary);
+    font-weight: 500;
     text-decoration: none;
+    transition: color 150ms cubic-bezier(0.2, 0, 0, 1);
 }
-.contact-phone:hover { text-decoration: underline; }
+.contact-phone:hover { 
+    color: var(--md-sys-color-primary);
+    text-decoration: underline;
+}
 
 th {
     background-color: rgba(248, 248, 248, 0.4);
