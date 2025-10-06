@@ -28,7 +28,7 @@ def fetch_from_navasan():
             if data and 'data' in data and data['data']:
                 price_value = data['data'].get('price', 0)
                 if price_value and 1000 <= price_value <= 1000000000000:
-                    price_toman = int(price_value / 10)
+                    price_toman = int(price_value)  # قیمت‌ها در API به تومان هست
                     
                     if symbol == 'sekkeh':
                         prices['full'] = price_toman

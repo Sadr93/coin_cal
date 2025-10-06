@@ -1,0 +1,17 @@
+# Crontab برای آپدیت قیمت‌ها در ساعت‌های تهران
+# ساعت‌های آپدیت: 8:00، 11:00، 14:00، 16:00 (ساعت تهران)
+
+# آپدیت در ساعت 8:00 صبح تهران
+0 8 * * * /path/to/coin_cal/update_prices.sh
+
+# آپدیت در ساعت 11:00 صبح تهران  
+0 11 * * * /path/to/coin_cal/update_prices.sh
+
+# آپدیت در ساعت 14:00 بعدازظهر تهران
+0 14 * * * /path/to/coin_cal/update_prices.sh
+
+# آپدیت در ساعت 16:00 بعدازظهر تهران
+0 16 * * * /path/to/coin_cal/update_prices.sh
+
+# برای اضافه کردن به crontab:
+# crontab crontab_tehran.txt
