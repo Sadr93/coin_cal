@@ -406,10 +406,20 @@ document.addEventListener('DOMContentLoaded', () => {
 // تابع بارگذاری تابلو قیمت‌ها
 async function loadPriceBoard() {
     try {
-        const response = await fetch('/api/price-board?_ts=' + Date.now(), { 
-            cache: 'no-store',
-            signal: AbortSignal.timeout(8000)
-        });
+        // ابتدا سعی کن از API سرور استفاده کنی
+        let response;
+        try {
+            response = await fetch('/api/price-board?_ts=' + Date.now(), { 
+                cache: 'no-store',
+                signal: AbortSignal.timeout(3000)
+            });
+        } catch (e) {
+            // اگر API سرور در دسترس نیست، از فایل JSON static استفاده کن
+            response = await fetch('/prices.json?_ts=' + Date.now(), { 
+                cache: 'no-store',
+                signal: AbortSignal.timeout(3000)
+            });
+        }
         
         if (!response.ok) throw new Error('Network error');
         
@@ -438,12 +448,21 @@ async function loadPriceBoard() {
         
     } catch (error) {
         console.log('Error loading price board:', error);
-        // در صورت خطا، پیام خطا نمایش بده
-        const priceElements = ['board-sekkeh', 'board-nim', 'board-rob', 'board-gerami', 'board-melted', 'board-18ayar'];
-        priceElements.forEach(id => {
-            const el = document.getElementById(id);
-            if (el) el.textContent = 'خطا در بارگذاری';
-        });
+        // در صورت خطا، قیمت‌های ثابت استفاده کن
+        const fallbackPrices = {
+            sekkeh: 111400000,
+            nim: 59600000,
+            rob: 33200000,
+            gerami: 16800000,
+            melted: 9855034,
+            '18ayar': 10483400
+        };
+        updatePriceBoardDisplay(fallbackPrices);
+        
+        const lastUpdateEl = document.getElementById('last-update');
+        if (lastUpdateEl) {
+            lastUpdateEl.textContent = 'قیمت‌های ثابت';
+        }
     }
 }
 
