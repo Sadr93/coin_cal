@@ -2,7 +2,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'IBM Plex Sans Arabic', 'Vazirmatn', sans-serif;
+    font-family: 'Yekan Bakh', 'Vazirmatn', sans-serif;
 }
 
 :root {
@@ -44,7 +44,7 @@
 }
 
 body {
-    font-family: 'IBM Plex Sans Arabic', 'Vazirmatn', sans-serif;
+    font-family: 'Yekan Bakh', 'Vazirmatn', sans-serif;
     margin: 0;
     padding: 0;
     background: url('images/Background.jpg') center center / cover no-repeat fixed;
