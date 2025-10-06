@@ -161,10 +161,10 @@ function calculate() {
 // --- پیکربندی دریافت قیمت ربع سکه ---
 const quarterPriceConfig = {
     enabled: true,
-    // آدرس صفحه پروفایل ربع سکه TGJU
-    url: 'https://www.tgju.org/profile/rob',
-    // سلکتور CSS که کاربر ارسال کرده است
-    selector: '#main > div.stocks-profile > div.stocks-header > div.stocks-header-main > div > div.fs-cell.fs-xl-5.fs-lg-5.fs-md-12.fs-sm-12.fs-xs-12.top-header-item-block-1 > div.top-mobile-block > div.block-last-change-percentage > span.price',
+    // صفحه لیست سکه‌ها
+    url: 'https://www.tgju.org/coin',
+    // سطر ربع سکه در جدول
+    selector: '#main > div.container.table-row-style > div > div > div:nth-child(1) > table > tbody > tr:nth-child(4) > td:nth-child(2)'
 };
 
 function toTomanFromRialText(text) {
@@ -227,25 +227,42 @@ async function fetchPriceOnce(config, targetElementId) {
     }
 }
 
+function setPriceIfValid(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const v = Number(value || 0);
+    if (v && v >= 100000 && v <= 1000000000000) {
+        el.textContent = formatNumber(v) + ' تومان';
+    }
+}
+
 // محاسبه مبلغ کل = جمع (قیمت هر نوع × تعداد)
 function computeTotals() {
     const priceQuarterText = (document.getElementById('price-quarter') || {}).textContent || '';
     const priceHalfText = (document.getElementById('price-half') || {}).textContent || '';
     const priceFullText = (document.getElementById('price-full') || {}).textContent || '';
+    const priceGramText = (document.getElementById('price-gram') || {}).textContent || '';
+    const priceMeltedText = (document.getElementById('price-melted') || {}).textContent || '';
 
     const countQuarterText = (document.getElementById('count-quarter') || {}).value || '۰';
     const countHalfText = (document.getElementById('count-half') || {}).value || '۰';
     const countFullText = (document.getElementById('count-full') || {}).value || '۰';
+    const countGramText = (document.getElementById('count-gram') || {}).value || '۰';
+    const countMeltedText = (document.getElementById('count-melted') || {}).value || '۰';
 
     const priceQuarter = getNumericValue(priceQuarterText); // به تومان
     const priceHalf = getNumericValue(priceHalfText);
     const priceFull = getNumericValue(priceFullText);
+    const priceGram = getNumericValue(priceGramText);
+    const priceMelted = getNumericValue(priceMeltedText);
 
     const countQuarter = getNumericValue(countQuarterText);
     const countHalf = getNumericValue(countHalfText);
     const countFull = getNumericValue(countFullText);
+    const countGram = getNumericValue(countGramText);
+    const countMelted = getNumericValue(countMeltedText);
 
-    const baseTotal = (priceQuarter * countQuarter) + (priceHalf * countHalf) + (priceFull * countFull);
+    const baseTotal = (priceQuarter * countQuarter) + (priceHalf * countHalf) + (priceFull * countFull) + (priceGram * countGram) + (priceMelted * countMelted);
 
     // تعداد اقساط (ماه‌ها) و افزایش ۳.۹٪ به ازای هر ماه
     const installmentsEl = document.getElementById('installments-count');
@@ -265,7 +282,7 @@ function computeTotals() {
         perInstallmentEl.textContent = per ? formatNumber(per) + ' تومان' : '—';
     }
 
-    // وثیقه = (مبلغ کل + ۲۰٪) / قیمت هر گرم طلای دست دوم
+    // وثیقه = (مبلغ کل + ۲۰٪) / قیمت هر گرم طلای 18 عیار از تابلو
     const goldMiniText = (document.getElementById('price-goldmini') || {}).textContent || '';
     const goldMiniPrice = getNumericValue(goldMiniText); // به تومان
     const collateralEl = document.getElementById('detail-collateral');
@@ -280,15 +297,56 @@ function computeTotals() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+    // اگر سرور، قیمت‌های کش‌شده را تزریق کرده، سریع نمایش بده
+    if (window.__PRICES__) {
+        const p = window.__PRICES__ || {};
+        setPriceIfValid('price-quarter', p.quarter);
+        setPriceIfValid('price-half', p.half);
+        setPriceIfValid('price-full', p.full);
+        setPriceIfValid('price-gram', p.gram);
+        setPriceIfValid('price-melted', p.melted);
+        setPriceIfValid('price-goldmini', p.goldmini);
+        computeTotals();
+    }
+    async function loadCachedPrices() {
+        try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 8000);
+            const res = await fetch('/api/prices?_ts=' + Date.now(), { cache: 'no-store', signal: controller.signal });
+            clearTimeout(timeoutId);
+            if (!res.ok) throw new Error('bad status');
+            const json = await res.json();
+            const p = json && json.prices ? json.prices : {};
+            setPriceIfValid('price-quarter', p.quarter);
+            setPriceIfValid('price-half', p.half);
+            setPriceIfValid('price-full', p.full);
+            setPriceIfValid('price-gram', p.gram);
+            setPriceIfValid('price-melted', p.melted);
+            setPriceIfValid('price-goldmini', p.goldmini);
+            computeTotals();
+            // ensure at least one valid price present
+            const hasAny = !!(p.quarter || p.half || p.full || p.gram || p.melted || p.goldmini);
+            return hasAny;
+        } catch (_) {
+            return false;
+        }
+    }
+    async function loadCachedPricesWithRetry() {
+        const ok1 = await loadCachedPrices();
+        if (ok1) return true;
+        // small backoff then retry once
+        await new Promise(r => setTimeout(r, 1200));
+        return await loadCachedPrices();
+    }
     const halfConfig = {
         enabled: true,
-        url: 'https://www.tgju.org/profile/nim',
-        selector: '#main > div.stocks-profile > div.stocks-header > div.stocks-header-main > div > div.fs-cell.fs-xl-3.fs-lg-3.fs-md-6.fs-sm-12.fs-xs-12.top-header-item-block-2.mobile-top-item-hide > div > h3.line.clearfix.mobile-hide-block > span.value > span:nth-child(1)'
+        url: 'https://www.tgju.org/coin',
+        selector: '#main > div.container.table-row-style > div > div > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(2)'
     };
     const fullConfig = {
         enabled: true,
-        url: 'https://www.tgju.org/profile/sekee',
-        selector: '#main > div.stocks-profile > div.stocks-header > div.stocks-header-main > div > div.fs-cell.fs-xl-3.fs-lg-3.fs-md-6.fs-sm-12.fs-xs-12.top-header-item-block-2.mobile-top-item-hide > div > h3.line.clearfix.mobile-hide-block > span.value > span:nth-child(1)'
+        url: 'https://www.tgju.org/coin',
+        selector: '#main > div.container.table-row-style > div > div > div:nth-child(1) > table > tbody > tr.tr-high > td:nth-child(2)'
     };
     const goldMiniConfig = {
         enabled: true,
@@ -302,18 +360,119 @@ document.addEventListener('DOMContentLoaded', () => {
         fetchPriceOnce({ ...halfConfig, url: withCacheBust(halfConfig.url) }, 'price-half');
         fetchPriceOnce({ ...fullConfig, url: withCacheBust(fullConfig.url) }, 'price-full');
         fetchPriceOnce({ ...goldMiniConfig, url: withCacheBust(goldMiniConfig.url) }, 'price-goldmini');
+        // Note: gram and melted prices will be handled by server API
     };
 
-    // بارگذاری اولیه با کش‌بسـت
-    refreshAllPrices();
+    // ابتدا تلاش از API کش سرور، در صورت نبود، به اسکرپینگ سقوط می‌کنیم
+    // این بخش غیرفعال شد چون از تابلو قیمت‌ها استفاده می‌کنیم
+    // loadCachedPricesWithRetry().then((ok) => {
+    //     if (!ok) {
+    //         refreshAllPrices();
+    //     }
+    // });
 
     const installmentsEl = document.getElementById('installments-count');
     if (installmentsEl) {
         installmentsEl.addEventListener('change', computeTotals);
     }
 
-    // رفرش خودکار هر یک ساعت (۳,۶۰۰,۰۰۰ میلی‌ثانیه)
-    setInterval(refreshAllPrices, 3600000);
+    // هر یک ساعت ابتدا API سپس در صورت نیاز اسکرپینگ
+    // این بخش غیرفعال شد چون از تابلو قیمت‌ها استفاده می‌کنیم
+    // setInterval(async () => {
+    //     const ok = await loadCachedPrices();
+    //     if (!ok) refreshAllPrices();
+    // }, 3600000);
+
+    // بارگذاری اولیه قیمت‌ها
+    loadPriceBoard();
+    
+    // همگام‌سازی اولیه قیمت‌ها با جدول اصلی
+    setTimeout(() => {
+        loadPriceBoard();
+    }, 1000);
+    
+    // آپدیت قیمت‌ها فقط در ساعت‌های 8، 11، 14 و 16
+    setInterval(() => {
+        const now = new Date();
+        const hour = now.getHours();
+        if ([8, 11, 14, 16].includes(hour)) {
+            loadPriceBoard();
+        }
+    }, 60000); // هر دقیقه چک کن
 
     // FAQ removed
 });
+
+// تابع بارگذاری تابلو قیمت‌ها
+async function loadPriceBoard() {
+    try {
+        const response = await fetch('/api/price-board?_ts=' + Date.now(), { 
+            cache: 'no-store',
+            signal: AbortSignal.timeout(8000)
+        });
+        
+        if (!response.ok) throw new Error('Network error');
+        
+        const data = await response.json();
+        const priceBoard = data.price_board || {};
+        const updatedAt = data.updated_at || 0;
+        
+        // نمایش قیمت‌ها
+        updatePriceBoardDisplay(priceBoard);
+        
+        // نمایش زمان آخرین به‌روزرسانی
+        if (updatedAt) {
+            const updateTime = new Date(updatedAt * 1000);
+            const timeString = updateTime.toLocaleString('fa-IR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            const lastUpdateEl = document.getElementById('last-update');
+            if (lastUpdateEl) {
+                lastUpdateEl.textContent = timeString;
+            }
+        }
+        
+    } catch (error) {
+        console.log('Error loading price board:', error);
+        // در صورت خطا، پیام خطا نمایش بده
+        const priceElements = ['board-sekkeh', 'board-nim', 'board-rob', 'board-gerami', 'board-melted', 'board-18ayar'];
+        priceElements.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.textContent = 'خطا در بارگذاری';
+        });
+    }
+}
+
+// تابع نمایش قیمت‌ها در تابلو (حذف شد - فقط برای همگام‌سازی با جدول اصلی)
+function updatePriceBoardDisplay(priceBoard) {
+    // همگام‌سازی قیمت‌ها با جدول اصلی
+    syncPricesToMainTable(priceBoard);
+}
+
+// تابع همگام‌سازی قیمت‌ها با جدول اصلی
+function syncPricesToMainTable(priceBoard) {
+    // نگاشت قیمت‌های تابلو به عناصر جدول اصلی
+    const mainTableMap = {
+        'price-full': priceBoard.sekkeh,      // سکه امامی
+        'price-half': priceBoard.nim,        // سکه نیم
+        'price-quarter': priceBoard.rob,     // سکه ربع
+        'price-gram': priceBoard.gerami,     // سکه گرمی
+        'price-melted': priceBoard.melted,   // طلای آب شده
+        'price-goldmini': priceBoard['18ayar'] // طلای 18 عیار
+    };
+    
+    Object.entries(mainTableMap).forEach(([elementId, price]) => {
+        const element = document.getElementById(elementId);
+        if (element && price && price > 0) {
+            element.textContent = formatNumber(price) + ' تومان';
+            element.classList.remove('loading-text');
+        }
+    });
+    
+    // محاسبه مجدد مجموع‌ها
+    computeTotals();
+}
