@@ -461,7 +461,16 @@ async function loadPriceBoard() {
         
         const lastUpdateEl = document.getElementById('last-update');
         if (lastUpdateEl) {
-            lastUpdateEl.textContent = 'قیمت‌های ثابت';
+            // نمایش زمان فعلی به جای "قیمت‌های ثابت"
+            const now = new Date();
+            const timeString = now.toLocaleString('fa-IR', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+            lastUpdateEl.textContent = timeString;
         }
     }
 }
