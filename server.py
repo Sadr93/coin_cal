@@ -43,7 +43,41 @@ def fetch_prices_hourly() -> dict:
     if CACHE['prices'] and (now - CACHE['timestamp'] < 3600):
         return CACHE['prices']
 
-    # برای اطمینان از کارکرد در production، همیشه fallback prices برگردان
+    # 1) Try Navasan primary source first
+    try:
+        prices_nav = fetch_from_navasan()
+        if prices_nav and any(prices_nav.get(k) for k in ['quarter','half','full']):
+            CACHE['prices'] = prices_nav
+            CACHE['timestamp'] = now
+            try:
+                with open(LOCAL_CACHE_FILE, 'w', encoding='utf-8') as f:
+                    json.dump({ 'prices': prices_nav, 'updated_at': now }, f, ensure_ascii=False)
+            except Exception:
+                pass
+            return prices_nav
+    except Exception as e:
+        print(f"Error in fetch_prices_hourly Navasan: {e}")
+        pass
+
+    # 2) Try GitHub cached JSON
+    try:
+        txt = _fetch_text(GITHUB_CACHE_JSON + f'?_ts={now}')
+        data = json.loads(txt)
+        prices = data.get('prices') or {}
+        # validate all values
+        if prices and all(_is_valid_price_toman(int(prices.get(k, 0))) for k in ['quarter','half','full','goldmini']):
+            CACHE['prices'] = prices
+            CACHE['timestamp'] = now
+            return prices
+    except Exception:
+        pass
+
+    # 3) Fallback: use last known good (memory or disk) without overwriting
+    existing = CACHE['prices'] or load_prices_from_disk_quick() or {}
+    if existing:
+        return existing
+    
+    # 4) Final fallback: return fixed prices
     melted_per_gram = 45412000 / 4.6079999764  # تبدیل از مثقال به گرم
     fallback_prices = {
         'full': 111400000,      # سکه طرح امامی
